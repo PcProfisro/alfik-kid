@@ -46,7 +46,7 @@ function PortalRouter() {
         background: 'linear-gradient(160deg, #DBEEF9 0%, #EEF5FB 60%, #F2F7FB 100%)',
         display: 'flex', flexDirection: 'column',
         alignItems: 'center', justifyContent: 'center', gap: 48,
-        fontFamily: '"Fredoka", "Nunito", sans-serif',
+        fontFamily: '"Mulish", "Nunito", sans-serif',
       }}>
         <img src="assets/icon_alfik_sk.svg" alt="Alfík"
           style={{ height: 160, width: 'auto', filter: 'drop-shadow(0 16px 32px rgba(30,60,120,.18))' }} />
@@ -54,7 +54,7 @@ function PortalRouter() {
           padding: '22px 64px', borderRadius: 99, border: 'none', cursor: 'pointer',
           background: 'linear-gradient(135deg, #2E73C9 0%, #1E51A6 100%)',
           color: '#fff', fontSize: 32, fontWeight: 700,
-          fontFamily: '"Fredoka", "Nunito", sans-serif',
+          fontFamily: '"Mulish", "Nunito", sans-serif',
           boxShadow: '0 16px 40px -12px rgba(30,60,180,.45)',
           display: 'flex', alignItems: 'center', gap: 18,
           transition: 'transform .15s ease',
