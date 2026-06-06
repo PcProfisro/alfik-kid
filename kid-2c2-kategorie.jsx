@@ -94,8 +94,30 @@ function Kid_2B2_Categories() {
               style={{
               background: '#fff', borderRadius: 20, padding: 13, aspectRatio: '1 / 1',
               display: 'flex', flexDirection: 'column', gap: 8, cursor: 'pointer',
-              boxShadow: 'var(--alf-shadow-tile)',
+              boxShadow: 'var(--alf-shadow-tile)', position: 'relative',
             }}>
+              {/* speaker button — top right */}
+              <button
+                onClick={(e) => { e.stopPropagation(); if (window.speechSynthesis) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(sc.name); u.lang = 'sk-SK'; u.rate = 0.92; window.speechSynthesis.speak(u); } }}
+                title="Vypočuť názov"
+                style={{
+                  position: 'absolute', top: 10, right: 10, zIndex: 5,
+                  width: 32, height: 32, borderRadius: 10, border: 'none',
+                  background: 'rgba(46,115,201,.92)', color: '#fff', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 3px 8px -2px rgba(20,45,95,.4)',
+                  transition: 'transform .14s ease, background .14s ease',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(30,81,166,.95)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(46,115,201,.92)'; }}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                  <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                </svg>
+              </button>
+
               {/* illustration zone */}
               <div className="b2zone" style={{
                 background: sc.tint, borderRadius: 15, flex: 1, minHeight: 0, position: 'relative',

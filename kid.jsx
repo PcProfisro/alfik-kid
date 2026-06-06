@@ -184,7 +184,7 @@ function MapStop({ x, y, cat, state = 'available', progressPct = 0, stars = 0, i
 }
 
 // ─── Kid sidebar (left rail) ────────────────────────────────────────────
-function KidSidebar({ active = 'map' }) {
+function KidSidebar({ active = 'map', extra = null }) {
   // Icon-only rail of big, friendly buttons — no text labels (kindergarten kids
   // navigate by picture, not by reading). Childlike filled icons.
   const nav = window.useNav?.();
@@ -252,6 +252,11 @@ function KidSidebar({ active = 'map' }) {
             </a>
           );
         })}
+        {extra && (
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+            {extra}
+          </div>
+        )}
       </nav>
 
       <div className="kid-foot" style={{ width: '100%' }}>
@@ -385,7 +390,28 @@ function Kid_2_Intro() {
               { id: 't3', age: '4', name: 'Kde je moja mamička?', rating: 'good',  img: 'kid-2c-img/kde-mamicka.jpg' },
               { id: 't4', age: '3', name: 'Kto povedal mňau?',    rating: 'good',  img: 'kid-2c-img/kto-mnau.jpg' },
             ].map((t) => (
-              <div key={t.id} className="ucard" onClick={() => setPopup(t)} style={{ background: '#fff', borderRadius: 20, padding: 13, display: 'flex', flexDirection: 'column', gap: 10, boxShadow: 'var(--alf-shadow-tile)', cursor: 'pointer' }}>
+              <div key={t.id} className="ucard" onClick={() => setPopup(t)} style={{ background: '#fff', borderRadius: 20, padding: 13, display: 'flex', flexDirection: 'column', gap: 10, boxShadow: 'var(--alf-shadow-tile)', cursor: 'pointer', position: 'relative' }}>
+                {/* speaker button — top right */}
+                <button
+                  onClick={(e) => { e.stopPropagation(); if (window.speechSynthesis) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t.name); u.lang = 'sk-SK'; u.rate = 0.92; window.speechSynthesis.speak(u); } }}
+                  title="Vypočuť názov"
+                  style={{
+                    position: 'absolute', top: 10, right: 10, zIndex: 5,
+                    width: 32, height: 32, borderRadius: 10, border: 'none',
+                    background: 'rgba(46,115,201,.92)', color: '#fff', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 3px 8px -2px rgba(20,45,95,.4)',
+                    transition: 'transform .14s ease, background .14s ease',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(30,81,166,.95)'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(46,115,201,.92)'; }}
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                    <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+                  </svg>
+                </button>
                 <div style={{ position: 'relative', borderRadius: 14, overflow: 'hidden', aspectRatio: '5 / 3', background: 'var(--alf-bg)', boxShadow: 'inset 0 0 0 1px rgba(15,30,55,.07)' }}>
                   <img src={t.img} alt={t.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
@@ -845,6 +871,36 @@ function Kid_2C_Materials() {
       {cornerBtn('back', 'Späť', 'left')}
       {cornerBtn('home', 'Domov', 'right')}
 
+      {/* age filter — right column, below home button */}
+      <div style={{
+        position: 'absolute', top: '50%', transform: 'translateY(-50%)', right: 'calc((100% - 944px) / 4 - 30px)', zIndex: 12,
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8,
+      }}>
+        {['all', '3', '4', '5'].map((a) => {
+          const m = AGE_META[a];
+          const isAct = ageFilter === a;
+          return (
+            <button key={a} onClick={() => setAgeFilter(a)} title={m.label}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+              style={{
+                width: 60, height: 60, borderRadius: 20, padding: 8, border: 'none',
+                background: isAct
+                  ? 'linear-gradient(180deg,#fff 0%,#EEF4FC 100%)'
+                  : 'linear-gradient(180deg,#2E73C9 0%,#1E51A6 100%)',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: isAct
+                  ? `0 6px 16px -4px ${m.color}88`
+                  : '0 9px 18px -6px rgba(20,45,95,.5)',
+                outline: isAct ? `2.5px solid ${m.color}` : 'none',
+                transition: 'transform .15s cubic-bezier(.2,.7,.3,1)',
+              }}>
+              <AgeIcon age={a} size={34} />
+            </button>
+          );
+        })}
+      </div>
+
       {/* compact hero — same top row as 2B2 */}
       <div style={{ padding: '18px 0 0' }}>
         <div style={{
@@ -859,24 +915,7 @@ function Kid_2C_Materials() {
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontFamily: 'var(--alf-font-display)', fontSize: 28, fontWeight: 700, lineHeight: 1 }}>Domáce zvieratá</div>
           </div>
-          {/* icon-only age filter */}
-          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }} title="Filter podľa veku">
-            {['all', '3', '4', '5'].map((a) => {
-              const m = AGE_META[a];
-              const active = ageFilter === a;
-              return (
-                <button key={a} onClick={() => setAgeFilter(a)} title={m.label} style={{
-                  width: 60, height: 60, borderRadius: 20, padding: 9,
-                  background: active ? '#fff' : '#4A95CE',
-                  border: active ? `2.5px solid ${m.color}` : '2.5px solid transparent',
-                  cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  transition: 'background .15s ease, border-color .15s ease',
-                }}>
-                  <AgeIcon age={a} size={34} />
-                </button>
-              );
-            })}
-          </div>
+
         </div>
       </div>
 
@@ -893,7 +932,30 @@ function Kid_2C_Materials() {
             background: '#fff', borderRadius: 20, padding: 13,
             display: 'flex', flexDirection: 'column', gap: 10,
             boxShadow: 'var(--alf-shadow-tile)', cursor: 'pointer',
+            position: 'relative',
           }}>
+            {/* speaker button — top right */}
+            <button
+              onClick={(e) => { e.stopPropagation(); if (window.speechSynthesis) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(t.name); u.lang = 'sk-SK'; u.rate = 0.92; window.speechSynthesis.speak(u); } }}
+              title="Vypočuť názov"
+              style={{
+                position: 'absolute', top: 10, right: 10, zIndex: 5,
+                width: 32, height: 32, borderRadius: 10, border: 'none',
+                background: 'rgba(46,115,201,.92)', color: '#fff', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 3px 8px -2px rgba(20,45,95,.4)',
+                transition: 'transform .14s ease, background .14s ease',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.12)'; e.currentTarget.style.background = 'rgba(30,81,166,.95)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(46,115,201,.92)'; }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+              </svg>
+            </button>
+
             {/* framed photo — 5:3, rounded, hairline ring */}
             <div style={{
               position: 'relative', borderRadius: 14, overflow: 'hidden',
@@ -905,10 +967,9 @@ function Kid_2C_Materials() {
               }} />
             </div>
 
-            {/* title + age + rating */}
+            {/* title + rating */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0 2px' }}>
               <div style={{ flex: 1, fontFamily: 'var(--alf-font-display)', fontSize: 14.5, fontWeight: 700, color: 'var(--alf-ink)', lineHeight: 1.15 }}>{t.name}</div>
-              <AgeIcon age={t.age} size={28} />
               {t.rating && <RatingBadge rating={t.rating} size={30} />}
             </div>
           </div>
